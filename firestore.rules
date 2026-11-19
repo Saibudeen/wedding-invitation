@@ -1,0 +1,21 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /wishes/{wishId} {
+      // Public guestbook: visitors can read wishes and add new ones.
+      // Existing wishes cannot be edited or deleted from the website.
+      allow get: if true;
+      allow list: if request.query.limit != null && request.query.limit <= 30;
+      allow create: if request.resource.data.keys().hasAll(['name', 'message', 'createdAt'])
+        && request.resource.data.keys().hasOnly(['name', 'message', 'createdAt'])
+        && request.resource.data.name is string
+        && request.resource.data.name.size() > 0
+        && request.resource.data.name.size() <= 80
+        && request.resource.data.message is string
+        && request.resource.data.message.size() > 0
+        && request.resource.data.message.size() <= 1200
+        && request.resource.data.createdAt == request.time;
+      allow update, delete: if false;
+    }
+  }
+}
