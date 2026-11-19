@@ -42,7 +42,9 @@
     @keyframes frame-glow{to{box-shadow:inset 0 0 30px #eac28a30,0 0 22px #eac28a50}}
     @media(prefers-reduced-motion:reduce){#glitter{display:none}.hero h1,.frame{animation:none}.hero h1{color:var(--gold-light);background:none}}
   </style>
-</head>
+<style>
+.countdown{max-width:750px;margin:36px auto 0;text-align:center;padding:28px 15px;border:1px solid #dcb98180;background:#ffffff09;border-radius:8px}.countdown h2{font-family:'Libre Baskerville',serif;font-weight:400;color:var(--gold-light);font-size:26px;margin:10px 0 22px}.countdown-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.countdown-grid div{border:1px solid #dcb98180;padding:14px 3px;background:#26091688;border-radius:5px}.countdown-grid strong{display:block;font-size:clamp(25px,6vw,48px);font-variant-numeric:tabular-nums;color:var(--gold-light)}.countdown-grid span{font-size:clamp(9px,2.5vw,12px);text-transform:uppercase;letter-spacing:.08em;color:var(--gold)}
+</style></head>
 <body>
   <div id="glitter" aria-hidden="true"></div>
   <header class="topbar">
@@ -63,6 +65,7 @@
       <p class="place-line">Samco, Pallavaram</p>
       <a class="hero-action" href="#mehndi">VIEW INVITATION DETAILS ↓</a>
     </section>
+    <section class="countdown" aria-labelledby="countdown-heading"><span class="kicker">Until we say I do</span><h2 id="countdown-heading">Counting Down to Our Wedding</h2><div class="countdown-grid" role="timer" aria-label="Time remaining until the wedding"><div><strong id="cdDays">00</strong><span>Days</span></div><div><strong id="cdHours">00</strong><span>Hours</span></div><div><strong id="cdMinutes">00</strong><span>Minutes</span></div><div><strong id="cdSeconds">00</strong><span>Seconds</span></div></div><p class="help" id="countdownNote">22 November 2026 · 11:11 AM IST</p></section>
     <section class="details event-mehndi" id="mehndi" aria-labelledby="mehndi-heading">
       <span class="kicker">You are warmly invited to the</span>
       <h2 id="mehndi-heading">Mehndi</h2>
@@ -86,12 +89,12 @@
       <span class="kicker">Love &amp; blessings</span><h2 id="wishes-heading">Leave Your Wishes</h2>
       <div class="wish-card">
         <p class="wish-intro">Your gracious presence and blessings will make our special day even more memorable.</p>
-        <form id="wishForm">
+        <form id="wishForm" onsubmit="return false;">
           <div class="field"><label for="guestName">Your name</label><input type="text" id="guestName" name="guestName" maxlength="80" autocomplete="name" placeholder="Enter your name" required></div>
           <div class="field"><label for="guestWish">Your wishes / dua</label><textarea id="guestWish" name="guestWish" maxlength="1200" placeholder="Write a heartfelt wish or dua for Ashaf and Abisha…" required></textarea></div>
-          <div class="actions"><button class="btn" type="submit">Send Your Wishes ♡</button><button class="btn secondary" type="button" id="copyWishBtn">Copy Wish</button></div>
+          <div class="actions"><button class="btn" type="submit" disabled>Send Your Wishes ♡</button><button class="btn secondary" type="button" id="copyWishBtn">Copy Wish</button></div>
           <p class="help">Your name and wishes will be publicly visible below after submission. Please avoid sharing private information. You can also copy your wish.</p>
-          <p class="status" id="wishStatus" role="status" aria-live="polite"></p>
+          <p class="status" id="wishStatus" role="status" aria-live="polite">Connecting to Firebase…</p>
         </form>
         <div class="preview" id="wishPreview" hidden><strong id="previewName"></strong><p id="previewText"></p></div>
       </div>
@@ -102,7 +105,7 @@
       <div class="divider"></div>
       <p class="guestbook-status" id="wishesListStatus" role="status" aria-live="polite">Loading wishes…</p>
       <div class="wishes-list" id="wishesList" aria-label="Guest wishes"></div>
-      <p class="help">Showing the 30 most recent wishes, newest first. New messages appear automatically.</p>
+      <p class="help">Showing all wishes, newest first. New messages appear automatically.</p>
     </section>
     <div class="family">Come, celebrate love, laughter and togetherness with us!<br>With love,<strong>Abis Family</strong></div>
   </main>
@@ -182,6 +185,14 @@
       layer.appendChild(fragment);
     })();
   </script>
-  <script type="module" src="./firebase-wishes.js"></script>
+  <script>
+  (() => {
+    const target = Date.parse('2026-11-22T11:11:00+05:30');
+    function tick(){const left=Math.max(0,Math.ceil((target-Date.now())/1000)); const vals=[Math.floor(left/86400),Math.floor(left/3600)%24,Math.floor(left/60)%60,left%60]; ['cdDays','cdHours','cdMinutes','cdSeconds'].forEach((id,i)=>document.getElementById(id).textContent=String(vals[i]).padStart(2,'0')); if(!left)document.getElementById('countdownNote').textContent='Our wedding day has arrived!';}
+    tick(); setInterval(tick,1000);
+    const status=document.getElementById('wishStatus');
+    import('./firebase-wishes.js?v=20261120connection2').catch(error=>{console.error('Firebase initialization failed:',error);status.textContent='Could not connect to Firebase. Your wish has not been sent. Please refresh and try again.';document.getElementById('wishesListStatus').textContent='Unable to load wishes. Please check your connection.';});
+  })();
+  </script>
 </body>
 </html>

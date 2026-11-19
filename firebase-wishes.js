@@ -1,8 +1,8 @@
 // Ashaf & Abisha — Firebase guestbook (GitHub Pages compatible, no build tools).
 import { initializeApp } from "https://www.gstatic.com/firebasejs/13.3.0/firebase-app.js";
 import {
-  getFirestore, collection, addDoc, serverTimestamp,
-  query, orderBy, limit, onSnapshot
+  initializeFirestore, collection, addDoc, serverTimestamp,
+  onSnapshot
 } from "https://www.gstatic.com/firebasejs/13.3.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -15,7 +15,7 @@ const firebaseConfig = {
   measurementId: "G-GQGMY9VM47"
 };
 
-const db = getFirestore(initializeApp(firebaseConfig));
+const db = initializeFirestore(initializeApp(firebaseConfig), { experimentalForceLongPolling: true });
 const wishesRef = collection(db, "wishes");
 const form = document.getElementById("wishForm");
 const status = document.getElementById("wishStatus");
@@ -46,19 +46,21 @@ function renderWish(doc) {
 }
 
 if (list && listStatus) {
-  // The newest 30 messages are displayed. Firestore pushes updates live.
-  const recentWishes = query(wishesRef, orderBy("createdAt", "desc"), limit(30));
-  onSnapshot(recentWishes, snapshot => {
-    const cards = snapshot.docs.map(renderWish);
+  // Read every document, including older documents without timestamps.
+  const recentWishes = wishesRef;
+  onSnapshot(recentWishes, { includeMetadataChanges: true }, snapshot => {
+    const cards = snapshot.docs.filter(doc => !doc.metadata.hasPendingWrites).sort((a,b) => (b.data().createdAt?.toMillis?.() || 0) - (a.data().createdAt?.toMillis?.() || 0)).map(renderWish);
     list.replaceChildren(...cards);
-    listStatus.textContent = cards.length ? "" : "No wishes yet. Be the first to share your blessings!";
+    listStatus.textContent = snapshot.metadata.fromCache ? "Connecting to Firebase… showing cached wishes, if available." : (cards.length ? "" : "No wishes yet. Be the first to share your blessings!");
   }, error => {
     console.error("Could not load guest wishes:", error);
-    listStatus.textContent = "Wishes are temporarily unavailable. Please check the Firestore rules and try again.";
+    listStatus.textContent = `Unable to load wishes (${error.code || "connection error"}). Please check Firestore rules and refresh.`;
   });
 }
 
 if (form && status && submitButton) {
+  submitButton.disabled = false;
+  status.textContent = "";
   form.addEventListener("submit", async event => {
     event.preventDefault();
     const name = document.getElementById("guestName").value.trim();
@@ -68,8 +70,21 @@ if (form && status && submitButton) {
       return;
     }
     submitButton.disabled = true;
+    const fields = [document.getElementById("guestName"), document.getElementById("guestWish")];
+    fields.forEach(field => field.readOnly = true);
     submitButton.textContent = "Sending your wishes…";
-    status.textContent = "";
+    status.textContent = "Waiting for Firebase to confirm your wish…";
+    if (!navigator.onLine) {
+      fields.forEach(field => field.readOnly = false);
+      submitButton.disabled = false;
+      submitButton.textContent = "Send Your Wishes ♡";
+      status.textContent = "You are offline. Reconnect and try again. Your text is preserved.";
+      return;
+    }
+    const warning = setTimeout(() => {
+      submitButton.textContent = "Awaiting confirmation…";
+      status.textContent = "Firebase has not confirmed the write yet. Check your internet connection, VPN or browser network restrictions. Keep this page open; your wish may still be saved. Do not submit it again yet.";
+    }, 15000);
     try {
       await addDoc(wishesRef, {name, message, createdAt: serverTimestamp()});
       status.textContent = "Thank you! Your wishes are now in our guestbook. ♡";
@@ -78,8 +93,10 @@ if (form && status && submitButton) {
       if (preview) preview.hidden = true;
     } catch(error) {
       console.error("Could not save guest wish:", error);
-      status.textContent = "Unable to send your wishes. Please try again or check the Firestore configuration.";
+      status.textContent = `Wish not saved (${error.code || "connection error"}). Your text is preserved. Please try again.`;
     } finally {
+      clearTimeout(warning);
+      fields.forEach(field => field.readOnly = false);
       submitButton.disabled = false;
       submitButton.textContent = "Send Your Wishes ♡";
     }
