@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#351321">
   <meta name="description" content="With the blessings of our families, join Ashaf and Abisha for their wedding ceremony on Sunday, 22 November 2026 at Samco, Pallavaram.">
   <meta property="og:title" content="Ashaf & Abisha | Wedding Invitation">
-  <meta property="og:description" content="Sunday, 22 November 2026 · 11:11 AM · Samco, Pallavaram">
+  <meta property="og:description" content="Sunday, 22 November 2026 · 10:00 AM · Samco, Pallavaram">
   <title>Ashaf & Abisha | Wedding Invitation</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -61,11 +61,11 @@
       <p class="invite-text">We joyfully invite you to celebrate<br>the wedding ceremony of</p>
       <h1>Ashaf <span class="amp">&amp;</span> Abisha</h1>
       <div class="gold-divider" aria-hidden="true"></div>
-      <p class="date-line">Sunday, 22nd November 2026 &nbsp; | &nbsp; 11:11 AM</p>
+      <p class="date-line">Sunday, 22nd November 2026 &nbsp; | &nbsp; 10:00 AM</p>
       <p class="place-line">Samco, Pallavaram</p>
       <a class="hero-action" href="#mehndi">VIEW INVITATION DETAILS ↓</a>
     </section>
-    <section class="countdown" aria-labelledby="countdown-heading"><span class="kicker">Until we say I do</span><h2 id="countdown-heading">Counting Down to Our Wedding</h2><div class="countdown-grid" role="timer" aria-label="Time remaining until the wedding"><div><strong id="cdDays">00</strong><span>Days</span></div><div><strong id="cdHours">00</strong><span>Hours</span></div><div><strong id="cdMinutes">00</strong><span>Minutes</span></div><div><strong id="cdSeconds">00</strong><span>Seconds</span></div></div><p class="help" id="countdownNote">22 November 2026 · 11:11 AM IST</p></section>
+    <section class="countdown" aria-labelledby="countdown-heading"><span class="kicker">Until we say I do</span><h2 id="countdown-heading">Counting Down to Our Wedding</h2><div class="countdown-grid" role="timer" aria-label="Time remaining until the wedding"><div><strong id="cdDays">00</strong><span>Days</span></div><div><strong id="cdHours">00</strong><span>Hours</span></div><div><strong id="cdMinutes">00</strong><span>Minutes</span></div><div><strong id="cdSeconds">00</strong><span>Seconds</span></div></div><p class="help" id="countdownNote">22 November 2026 · 10:00 AM IST</p></section>
     <section class="details event-mehndi" id="mehndi" aria-labelledby="mehndi-heading">
       <span class="kicker">You are warmly invited to the</span>
       <h2 id="mehndi-heading">Mehndi</h2>
@@ -80,7 +80,7 @@
       <span class="kicker">We joyfully invite you</span>
       <h2 id="details-heading">Celebrate our wedding ceremony</h2>
       <div class="divider"></div>
-      <div class="event-meta"><div class="meta"><span>Date</span><strong>Sunday, 22nd November 2026</strong></div><div class="meta"><span>Time</span><strong>11:11 AM</strong></div></div>
+      <div class="event-meta"><div class="meta"><span>Date</span><strong>Sunday, 22nd November 2026</strong></div><div class="meta"><span>Time</span><strong>10:00 AM</strong></div></div>
       <span class="kicker">Venue</span><p class="venue">Samco, Pallavaram</p>
       <div class="actions"><a class="btn" href="https://www.google.com/maps/search/?api=1&amp;query=Samco%2C%20Pallavaram" target="_blank" rel="noopener noreferrer">Find Venue on Maps ↗</a><button class="btn secondary" id="calendarBtn" type="button">Add to Calendar</button><button class="btn secondary" id="shareBtn" type="button">Share Invitation</button></div>
       <p class="help">The map link searches for Samco, Pallavaram. Please confirm the exact location before travelling.</p>
@@ -141,7 +141,7 @@
       weddingAudio.volume = Number(e.target.value) / 100;
     });
     const $ = (id) => document.getElementById(id);
-    const eventStart = new Date("2026-11-22T11:11:00+05:30");
+    const eventStart = new Date("2026-11-22T10:00:00+05:30");
     function wishText() {
       const name = $("guestName").value.trim();
       const wish = $("guestWish").value.trim();
@@ -153,7 +153,7 @@
     }
     $("copyWishBtn").addEventListener("click", async () => { const message = wishText(); if (!message) return; try { await navigator.clipboard.writeText(message); $("wishStatus").textContent="Copied! You can paste your wish into any message."; } catch { $("wishStatus").textContent="Select and copy your wish from the preview below."; } });
     $("shareBtn").addEventListener("click", async () => {
-      const data = {title: "Ashaf & Abisha Wedding Invitation", text: "Join us for Mehndi on Saturday, 21 November 2026 at 3:00 PM, Elite Beach Resort, Kanathur, and our wedding on Sunday, 22 November 2026 at 11:11 AM, Samco, Pallavaram.", url: location.href};
+      const data = {title: "Ashaf & Abisha Wedding Invitation", text: "Join us for Mehndi on Saturday, 21 November 2026 at 3:00 PM, Elite Beach Resort, Kanathur, and our wedding on Sunday, 22 November 2026 at 10:00 AM, Samco, Pallavaram.", url: location.href};
       if (navigator.share) {try {await navigator.share(data); return;} catch(e){if(e.name==="AbortError")return;}}
       try {await navigator.clipboard.writeText(location.href); $("shareBtn").textContent="Link Copied ✓";} catch {window.prompt("Copy the invitation link:",location.href);}
     });
@@ -187,11 +187,11 @@
   </script>
   <script>
   (() => {
-    const target = Date.parse('2026-11-22T11:11:00+05:30');
+    const target = Date.parse('2026-11-22T10:00:00+05:30');
     function tick(){const left=Math.max(0,Math.ceil((target-Date.now())/1000)); const vals=[Math.floor(left/86400),Math.floor(left/3600)%24,Math.floor(left/60)%60,left%60]; ['cdDays','cdHours','cdMinutes','cdSeconds'].forEach((id,i)=>document.getElementById(id).textContent=String(vals[i]).padStart(2,'0')); if(!left)document.getElementById('countdownNote').textContent='Our wedding day has arrived!';}
     tick(); setInterval(tick,1000);
     const status=document.getElementById('wishStatus');
-    import('./firebase-wishes.js?v=20261120connection2').catch(error=>{console.error('Firebase initialization failed:',error);status.textContent='Could not connect to Firebase. Your wish has not been sent. Please refresh and try again.';document.getElementById('wishesListStatus').textContent='Unable to load wishes. Please check your connection.';});
+    import('./firebase-wishes.js?v=20261120rest3').catch(error=>{console.error('Firebase initialization failed:',error);status.textContent='Could not connect to Firebase. Your wish has not been sent. Please refresh and try again.';document.getElementById('wishesListStatus').textContent='Unable to load wishes. Please check your connection.';});
   })();
   </script>
 </body>
